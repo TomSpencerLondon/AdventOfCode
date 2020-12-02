@@ -1,4 +1,4 @@
-import {findThreeNumbers, findTwoNumbers} from "../src/advent-1";
+import { findThreeNumbers, findTwoNumbers } from "../src/advent-1";
 
 describe("day 1", () => {
   it("finds two numbers that sum to 2020 from list", async () => {
