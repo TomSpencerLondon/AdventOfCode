@@ -5,7 +5,7 @@ export const move = (vector: Vector, direction: string): Vector => {
   let y: number = vector.y;
 
   if (direction === "right") {
-    x = (x + 3) % 10;
+    x = (x + 3) % 31;
   } else if (direction === "down") {
     y += 1;
   }

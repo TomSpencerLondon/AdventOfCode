@@ -22,7 +22,7 @@ export const countTrees = async (filename: string): Promise<number> => {
 
   let numberOfTrees = 0;
 
-  while (vector.y <= 11) {
+  while (vector.y < lines.length) {
     vector = move(vector, "right");
     if (isTree(vector, mappedTrees[vector.y])) {
       numberOfTrees += 1;
