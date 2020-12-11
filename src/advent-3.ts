@@ -4,7 +4,7 @@ import { Vector } from "./vector/vector";
 import { move } from "./vector/move";
 
 function isTree(vector: Vector, line: string[]): boolean {
-  return line[vector.x] === "#";
+  return line[vector.x % line.length] === "#";
 }
 
 export const countTrees = async (filename: string): Promise<number> => {
@@ -12,7 +12,7 @@ export const countTrees = async (filename: string): Promise<number> => {
   const result = await content;
 
   const lines = result.toString().split("\n");
-  let vector: Vector = { x: 0, y: 0 };
+  let currentPosition: Vector = { x: 0, y: 0 };
 
   const mappedTrees: string[][] = [];
 
@@ -22,12 +22,12 @@ export const countTrees = async (filename: string): Promise<number> => {
 
   let numberOfTrees = 0;
 
-  while (vector.y < lines.length) {
-    vector = move(vector, "right");
-    if (isTree(vector, mappedTrees[vector.y])) {
+  while (currentPosition.y < mappedTrees.length) {
+    if (isTree(currentPosition, mappedTrees[currentPosition.y])) {
       numberOfTrees += 1;
     }
-    vector = move(vector, "down");
+
+    currentPosition = move(currentPosition, { x: 3, y: 1 });
   }
   return numberOfTrees;
 };
