@@ -1,12 +1,8 @@
 import { Vector } from "./vector";
 
 export const move = (...vectors: Vector[]): Vector => {
-  let x = 0;
-  let y = 0;
-  vectors.forEach((v) => {
-    x += v.x;
-    y += v.y;
-  });
+  const x = vectors.reduce((accX, vector) => accX + vector.x, 0);
+  const y = vectors.reduce((accY, vector) => accY + vector.y, 0);
 
   return { x, y };
 };

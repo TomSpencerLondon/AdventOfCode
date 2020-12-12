@@ -8,6 +8,6 @@ describe("day 2", () => {
 
   it("counts valid single character occurrence password criteria from numbers on left and letter", async () => {
     const result = await countOnePositionPasswords("./test/data/day_2.txt");
-    expect(result).toEqual(454);
+    expect(result).toEqual(306);
   });
 });

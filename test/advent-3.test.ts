@@ -8,6 +8,6 @@ describe("day 3", () => {
 
   it("counts trees encountered by toboggan", async () => {
     const result = await part2("./test/data/day_3.txt");
-    expect(result).toEqual(1_783_386_774_432);
+    expect(result).toEqual(958815792);
   });
 });

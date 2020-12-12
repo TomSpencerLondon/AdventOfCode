@@ -20,10 +20,10 @@ export const part2 = async (filename: string): Promise<number> => {
   ];
 
   const collisions: number[] = await Promise.all(
-    slopes.map((slope) => countTrees(filename, { x: 3, y: 1 }))
+    slopes.map((slope) => countTrees(filename, slope))
   );
 
-  return collisions.reduce((acc, collisions) => acc * collisions, 1);
+  return collisions.reduce((product, collisions) => product * collisions, 1);
 };
 
 export const countTrees = async (
