@@ -18,12 +18,9 @@ export const part1 = async (filename: string): Promise<number> => {
   );
   const expectedFields = ["ecl", "pid", "eyr", "hcl", "byr", "iyr", "hgt"];
 
-  const number = strippedFields.reduce((acc, array) => {
-    const result = hasAllFields(expectedFields, array) ? 1 : 0;
-    return acc + result;
-  }, 0);
-
-  return number;
+  return strippedFields
+    .map((fieldArray) => hasAllFields(expectedFields, fieldArray))
+    .filter((value) => value).length;
 };
 
 export const part2 = async (filename: string): Promise<number> => {
