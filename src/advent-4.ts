@@ -26,26 +26,16 @@ export const part1 = async (filename: string): Promise<number> => {
 export const part2 = async (filename: string): Promise<number> => {
   const file = await readFile(filename);
   const passports = file.toString().split("\n\n");
-  const passportObjects = passports.map((p) => {
+  const passportObjects = passports.map((passport) => {
     const result = {};
-    p.split(/\s/)
-      .filter((p) => p)
-      .forEach((p) => {
-        const strings = p.split(":");
-        result[strings[0]] = strings[1];
-      });
+    passport.split(/\s/).forEach((field) => {
+      const [key, value] = field.split(":");
+      result[key] = value;
+    });
     return result;
   });
 
-  let number = 0;
-
-  passportObjects.forEach((p) => {
-    if (isValid(p)) {
-      number++;
-    }
-  });
-
-  return number;
+  return passportObjects.map(isValid).filter((value) => value).length;
 };
 
 const isValid = (passport: { [key: string]: string }): boolean => {
@@ -60,31 +50,6 @@ const isValid = (passport: { [key: string]: string }): boolean => {
   if (!included) {
     return false;
   }
-  //
-  // byr (Birth Year) - four digits; at least 1920 and at most 2002.
-  // iyr (Issue Year) - four digits; at least 2010 and at most 2020.
-  // eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
-
-  // hgt (Height) - a number followed by either cm or in:
-  // endsWith() - javascript
-  // If cm, the number must be at least 150 and at most 193.
-  // startsWith() - javascript
-
-  // If in, the number must be at least 59 and at most 76.
-  // hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-  // includes() / sum()
-  // ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-
-  // pid (Passport ID) - a nine-digit number, including leading zeroes.
-  // cid (Country ID) - ignored, missing or not.
-
-  if (
-    passport["byr"].length !== 4 ||
-    passport["iyr"].length !== 4 ||
-    passport["eyr"].length !== 4
-  ) {
-    return false;
-  }
 
   if (
     +passport["byr"] < 1920 ||
@@ -97,6 +62,46 @@ const isValid = (passport: { [key: string]: string }): boolean => {
     return false;
   }
 
+  if (!isValidHeight(passport)) {
+    return false;
+  }
+
+  const regex = RegExp(/^#[0-9A-F]{6}$/i);
+  if (!regex.test(passport["hcl"])) {
+    return false;
+  }
+
+  if (!checker(passport["ecl"])) {
+    return false;
+  }
+
+  if (!isValidPID(passport)) {
+    return false;
+  }
+
+  return true;
+};
+
+const isValidPID = (passport: {}) => {
+  const numberRegex = RegExp(/^\d+$/);
+  if (!numberRegex.test(passport["pid"]) || passport["pid"].length !== 9) {
+    return false;
+  }
+
+  return true;
+};
+
+async function readFile(filename: string) {
+  const content: Promise<Buffer> = fs.readFile(filename);
+  return content;
+}
+
+const checker = (value) =>
+  ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].some((element) =>
+    value.includes(element)
+  );
+
+const isValidHeight = (passport: {}): boolean => {
   if (!passport["hgt"].endsWith("cm") && !passport["hgt"].endsWith("in")) {
     return false;
   }
@@ -113,29 +118,5 @@ const isValid = (passport: { [key: string]: string }): boolean => {
       return false;
     }
   }
-
-  const regex = RegExp(/^#[0-9A-F]{6}$/i);
-  if (!regex.test(passport["hcl"])) {
-    return false;
-  }
-
-  const checker = (value) =>
-    ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].some((element) =>
-      value.includes(element)
-    );
-
-  if (!checker(passport["ecl"])) {
-    return false;
-  }
-
-  const numberRegex = RegExp(/^\d+$/);
-  if (!numberRegex.test(passport["pid"]) || passport["pid"].length !== 9) {
-    return false;
-  }
   return true;
 };
-
-async function readFile(filename: string) {
-  const content: Promise<Buffer> = fs.readFile(filename);
-  return content;
-}
