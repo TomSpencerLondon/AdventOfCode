@@ -8,6 +8,7 @@ describe("Binary Boarding Pass", () => {
     ["FFFFFLLL", 0],
     ["FFFFFLLR", 1],
     ["FFFFFLRL", 2],
+    ["FFFFFRRR", 7],
   ])("%s converts to %s", (ticket: string, expectedTicketNumber: number) => {
     const ticketNumber = binaryConversion(ticket);
     expect(ticketNumber).toEqual(expectedTicketNumber);
