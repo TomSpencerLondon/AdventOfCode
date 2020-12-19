@@ -1,7 +1,7 @@
 // FBFBBFFRLR
 // 44 * 8 + 5 = 357
 
-import { binaryConversion, part1 } from "../src/advent-5";
+import {binaryConversion, part1, part2} from "../src/advent-5";
 
 describe("Binary Boarding Pass", () => {
   it.each([
@@ -16,8 +16,13 @@ describe("Binary Boarding Pass", () => {
     expect(ticketNumber).toEqual(expectedTicketNumber);
   });
 
-  xit("Turns a lit of tickets into a decimal number", () => {
-    const result = part1("./test/data/day_5.txt");
-    expect(result).toEqual(56);
+  it("Turns a lit of tickets into a decimal number", async () => {
+    const result = await part1("./test/data/day_5.txt");
+    expect(result).toEqual(801);
+  });
+
+  it("finds the missing seat", async () => {
+    const result = await part2("./test/data/day_5.txt");
+    expect(result).toEqual(39);
   });
 });

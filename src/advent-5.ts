@@ -8,10 +8,32 @@ export const binaryConversion = (ticket: string): number => {
     })
     .join("");
 
-  return parseInt(binaryColumn, 2);
+  const number = parseInt(binaryColumn, 2);
+  return number;
 };
 
 export const part1 = async (filename: string): Promise<number> => {
   const result = await readFile(filename);
-  throw new Error("Unsupported");
+
+  const tickets = result.toString().trim().split("\n");
+
+  return tickets.reduce(
+    (acc, ticket) => Math.max(acc, binaryConversion(ticket)),
+    0
+  );
+};
+
+export const part2 = async (filename: string): Promise<number> => {
+  const result = await readFile(filename);
+  const tickets = result.toString().trim().split("\n");
+
+  const sortedNumbers = tickets
+    .map((ticket) => binaryConversion(ticket))
+    .sort();
+  console.log(sortedNumbers.reduce((acc, n) => Math.min(acc, n)));
+  for (let i = 1; i < sortedNumbers.length; i++) {
+    if (sortedNumbers[i] - sortedNumbers[i - 1] === 2) {
+      return sortedNumbers[i] - 1;
+    }
+  }
 };
