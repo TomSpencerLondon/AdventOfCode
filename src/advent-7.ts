@@ -2,7 +2,7 @@ import { readFile } from "./extract/file-reading";
 
 type Bags = Record<string, Record<string, number>>;
 
-export const count = async (filename: string): Promise<number> => {
+export const part1 = async (filename: string): Promise<number> => {
   const result = await readFile(filename);
   const lines = result.toString().trim().split("\n");
   const bags: Bags = {};
