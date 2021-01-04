@@ -1,8 +1,6 @@
 import { readFile } from "./extract/file-reading";
 import { Instruction } from "./instruction/instruction";
 
-type Bags = Record<string, Record<string, number>>;
-
 async function read(filename: string) {
   const result = await readFile(filename);
   const lines = result.toString().trim().split("\n");
@@ -86,7 +84,6 @@ export const part2 = async (filename: string): Promise<number> => {
     possiblyFaultyInstruction.operation = initialOperation;
   }
 };
-
 
 function run(instructions: Instruction[]): RunResult {
   // THIS IS NEW!
