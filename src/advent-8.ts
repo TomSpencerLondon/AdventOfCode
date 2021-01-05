@@ -7,7 +7,7 @@ async function read(filename: string) {
   return lines;
 }
 
-export const part1 = async (filename: string): Promise<number> => {
+async function parseInput(filename: string) {
   const lines = await read(filename);
   const instructions: Instruction[] = [];
 
@@ -20,48 +20,17 @@ export const part1 = async (filename: string): Promise<number> => {
 
     instructions.push(instruction);
   });
+  return instructions;
+}
 
-  let accumulator = 0;
-  let position = 0;
-  let instruction = instructions[position];
-
-  const visitedInstructions = new Set<Instruction>();
-
-  while (!visitedInstructions.has(instruction)) {
-    switch (instruction.operation) {
-      case "acc":
-        accumulator += instruction.argument;
-        position++;
-        break;
-      case "jmp":
-        position += instruction.argument;
-        break;
-      case "nop":
-        position++;
-        break;
-    }
-
-    visitedInstructions.add(instruction);
-    instruction = instructions[position];
-  }
-
+export const part1 = async (filename: string): Promise<number> => {
+  const instructions = await parseInput(filename);
+  const { accumulator } = run(instructions);
   return accumulator;
 };
 
 export const part2 = async (filename: string): Promise<number> => {
-  const lines = await read(filename);
-
-  const instructions: Instruction[] = [];
-
-  lines.forEach((line) => {
-    const [operation, argument] = line.split(" ");
-    const instruction: Instruction = {
-      operation: operation as "acc" | "jmp" | "nop",
-      argument: parseInt(argument),
-    };
-
-    instructions.push(instruction);
-  });
+  const instructions = await parseInput(filename);
 
   const { visitedInstructions } = run(instructions);
 
@@ -88,9 +57,7 @@ export const part2 = async (filename: string): Promise<number> => {
 function run(instructions: Instruction[]): RunResult {
   // THIS IS NEW!
   let exitCode = 0;
-
   let accumulator = 0;
-
   let position = 0;
   let instruction = instructions[position];
 
