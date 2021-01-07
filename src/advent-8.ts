@@ -10,12 +10,14 @@ async function read(filename: string) {
 async function parseInput(filename: string) {
   const lines = await read(filename);
   const instructions: Instruction[] = [];
+  let index = 0;
 
   lines.forEach((line) => {
     const [operation, argument] = line.split(" ");
     const instruction: Instruction = {
       operation: operation as "acc" | "jmp" | "nop",
       argument: parseInt(argument),
+      index: index++,
     };
 
     instructions.push(instruction);
@@ -38,19 +40,34 @@ export const part2 = async (filename: string): Promise<number> => {
     ...Array.from(new Set(visitedInstructions)),
   ].filter((instruction) => ["jmp", "nop"].includes(instruction.operation));
 
-  for (const possiblyFaultyInstruction of possiblyFaultyInstructions) {
-    const initialOperation = possiblyFaultyInstruction.operation;
+  const indexes: number[] = possiblyFaultyInstructions.map(
+    (instruction) => instruction.index
+  );
 
-    possiblyFaultyInstruction.operation =
-      initialOperation === "jmp" ? "nop" : "jmp";
+  const customInstructions = {};
 
-    const { exitCode, accumulator } = run(instructions);
+  for (let i = 0; i < indexes.length; i++) {
+    const possible = indexes[i];
+    customInstructions[possible] = possiblyFaultyInstructions.find(
+      (i) => i.index === possible
+    );
+  }
 
+  for (let i = 0; i < indexes.length; i++) {
+    const possible = indexes[i];
+    const initialOperation = customInstructions[possible].operation;
+    const custom: Instruction[] = [...instructions];
+    const found = {
+      ...custom[possible],
+      operation: initialOperation === "jmp" ? "nop" : "jmp",
+    };
+
+    custom.filter((c) => c.index !== possible);
+    custom[possible] = <Instruction>found;
+    const { exitCode, accumulator } = run(custom as Instruction[]);
     if (exitCode === 0) {
       return accumulator;
     }
-
-    possiblyFaultyInstruction.operation = initialOperation;
   }
 };
 
