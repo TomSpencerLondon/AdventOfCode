@@ -1,4 +1,4 @@
-import {part1, part2} from "../src/advent-10";
+import { part1, part2 } from "../src/advent-10";
 
 describe("Game", () => {
   it("should solve for the first example", async () => {
@@ -11,4 +11,3 @@ describe("Game", () => {
     expect(result).toEqual(396857386627072);
   });
 });
-
