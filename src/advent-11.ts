@@ -94,19 +94,12 @@ function setCharAt(str, index, chr) {
 
 export const part2 = async (filename: string): Promise<number> => {
   let plan: string[] = await read(filename);
-
-  // Find `maxRow` and `maxColumn`.
-  // This way, we know when to stop looping.
   const maxRow = plan.length - 1;
   const maxColumn = plan[0].length - 1;
 
   let hasChanges = false;
 
-  // Keep looping until no more changes are detected.
   do {
-    // Copy our initial plan. Seats change simultaneously.
-    // So, we have to look at our initial plan and apply
-    // changed to our new plan.
     const newPlan = plan.slice();
 
     // `true` if changes were necessary.
@@ -155,9 +148,6 @@ function occupiedSeatsVisibleFrom(
   column: number,
   plan: string[]
 ): number {
-  // Search in all directions.
-  // Filter out directions where no occupied seat is visible.
-  // After that, length of the array is the occupied seat count.
   return directions.filter((direction) => {
     let factor = 0;
 
