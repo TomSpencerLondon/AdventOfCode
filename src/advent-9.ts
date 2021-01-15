@@ -6,6 +6,16 @@ async function read(filename: string) {
   return lines;
 }
 
+function isNumberValid(preamble: number[], number: number) {
+  const numberIsValid = preamble.some((first) => {
+    return preamble.some((second) => {
+      if (first === second) return false;
+      return first + second === number;
+    });
+  });
+  return numberIsValid;
+}
+
 export const part1 = async (filename: string): Promise<number> => {
   const lines = await read(filename);
   const numbers = lines.map((line) => Number(line));
@@ -16,13 +26,7 @@ export const part1 = async (filename: string): Promise<number> => {
     const number = numbers[i];
 
     const preamble = numbers.slice(i - PREAMBLE_SIZE, i);
-
-    const numberIsValid = preamble.some((first) => {
-      return preamble.some((second) => {
-        if (first === second) return false;
-        return first + second === number;
-      });
-    });
+    const numberIsValid = isNumberValid(preamble, number);
 
     if (!numberIsValid) {
       return number;
@@ -59,12 +63,7 @@ const findInvalidNumber = (numbers: number[]): number => {
 
     const preamble = numbers.slice(i - PREAMBLE_SIZE, i);
 
-    const numberIsValid = preamble.some((first) => {
-      return preamble.some((second) => {
-        if (first === second) return false;
-        return first + second === number;
-      });
-    });
+    const numberIsValid = isNumberValid(preamble, number);
 
     if (!numberIsValid) {
       return number;
@@ -73,4 +72,4 @@ const findInvalidNumber = (numbers: number[]): number => {
 
   // Should never happen.
   throw new Error();
-}
+};
