@@ -13,36 +13,26 @@ export const part1 = async (filename: string): Promise<number> => {
 
   let hasChanges = false;
 
-  // Keep looping until no more changes are detected.
   do {
-    // Copy our initial plan. Seats change simultaneously.
-    // So, we have to look at our initial plan and apply
-    // changed to our new plan.
     const newPlan = plan.slice();
-
-    // `true` if changes were necessary.
     hasChanges = false;
 
-    // Check all seats in every row and column.
     for (let row = 0; row <= maxRow; row++) {
       for (let column = 0; column <= maxColumn; column++) {
         const seat = plan[row][column];
 
-        // Floor (.) never changes.
         if (seat === ".") {
           continue;
         }
 
         const occupiedSeats = occupiedSeatsAdjacentTo(row, column, plan);
 
-        // Check if a seat is empty (L) and there are no occupied seats adjacent to it.
         if (seat === "L" && occupiedSeats === 0) {
           hasChanges = true;
           toggleSeat(row, column, newPlan);
           continue;
         }
 
-        // Check if a seat is occupied (#) and four or more seats adjacent to it are also occupied.
         if (seat === "#" && occupiedSeats >= 4) {
           hasChanges = true;
           toggleSeat(row, column, newPlan);
@@ -50,13 +40,10 @@ export const part1 = async (filename: string): Promise<number> => {
       }
     }
 
-    // Our new plan becomes our current plan for the next loop.
     plan = newPlan;
   } while (hasChanges);
 
-  // Find the count of occupied seats.
   return plan.reduce((previousValue, currentValue) => {
-    // Remove all empty seats and add number of occupied seats.
     return previousValue + currentValue.replace(/[^#]/g, "").length;
   }, 0);
 };
@@ -103,4 +90,91 @@ function toggleSeat(row: number, column: number, plan: string[]): void {
 function setCharAt(str, index, chr) {
   if (index > str.length - 1) return str;
   return str.substring(0, index) + chr + str.substring(index + 1);
+}
+
+export const part2 = async (filename: string): Promise<number> => {
+  let plan: string[] = await read(filename);
+
+  // Find `maxRow` and `maxColumn`.
+  // This way, we know when to stop looping.
+  const maxRow = plan.length - 1;
+  const maxColumn = plan[0].length - 1;
+
+  let hasChanges = false;
+
+  // Keep looping until no more changes are detected.
+  do {
+    // Copy our initial plan. Seats change simultaneously.
+    // So, we have to look at our initial plan and apply
+    // changed to our new plan.
+    const newPlan = plan.slice();
+
+    // `true` if changes were necessary.
+    hasChanges = false;
+
+    // Check all seats in every row and column.
+    for (let row = 0; row <= maxRow; row++) {
+      for (let column = 0; column <= maxColumn; column++) {
+        const seat = plan[row][column];
+
+        // Floor (.) never changes.
+        if (seat === ".") {
+          continue;
+        }
+
+        const occupiedSeats = occupiedSeatsVisibleFrom(row, column, plan);
+
+        // Check if a seat is empty (L) and there are no occupied seats visible from it.
+        if (seat === "L" && occupiedSeats === 0) {
+          hasChanges = true;
+          toggleSeat(row, column, newPlan);
+          continue;
+        }
+
+        // Check if a seat is occupied (#) and five or more seats visible from it are also occupied.
+        if (seat === "#" && occupiedSeats >= 5) {
+          hasChanges = true;
+          toggleSeat(row, column, newPlan);
+        }
+      }
+    }
+
+    // Our new plan becomes our current plan for the next loop.
+    plan = newPlan;
+  } while (hasChanges);
+
+  // Find the count of occupied seats.
+  return plan.reduce((previousValue, currentValue) => {
+    // Remove all empty seats and add number of occupied seats.
+    return previousValue + currentValue.replace(/[^#]/g, "").length;
+  }, 0);
+};
+
+function occupiedSeatsVisibleFrom(
+  row: number,
+  column: number,
+  plan: string[]
+): number {
+  // Search in all directions.
+  // Filter out directions where no occupied seat is visible.
+  // After that, length of the array is the occupied seat count.
+  return directions.filter((direction) => {
+    let factor = 0;
+
+    // Use factor to keep moving forward into the current direction.
+    // This way, we can see if, somewhere along the way, there is an occupied seat.
+    while (true) {
+      factor++;
+      const seat =
+        plan[row + direction[0] * factor]?.[column + direction[1] * factor];
+
+      if (!seat || seat === "L") {
+        return false;
+      }
+
+      if (seat === "#") {
+        return true;
+      }
+    }
+  }).length;
 }
