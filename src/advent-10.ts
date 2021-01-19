@@ -44,7 +44,7 @@ export const part2 = async (filename: string): Promise<number> => {
   const builtInJoltage = Math.max(...joltages) + 3;
   joltages.push(builtInJoltage);
 
-  const solution = new Map<number, number>();
+  const solution = new Map<number, number | undefined>();
   solution.set(0, 1);
 
   const differences = [1, 2, 3];
@@ -56,7 +56,7 @@ export const part2 = async (filename: string): Promise<number> => {
       if (solution.has(joltage - difference)) {
         solution.set(
           joltage,
-          solution.get(joltage)! + solution.get(joltage - difference)!
+          solution.get(joltage) + solution.get(joltage - difference)
         );
       }
     });
